@@ -14,11 +14,12 @@ const AppBar = styled(MuiAppBar)(({ theme }) => ({
 
 const mdTheme = createTheme();
 
+//To know when we are creating a new user or editing an already existing one
 export const MODES = {
-  CREATE: 'CREATE',
-  EDIT: 'EDIT'
+  CREATE: 'CREATE_MODE',
+  EDIT: 'EDIT_MODE'
 }
-
+// Generate a new user object
 export const newUser = () => ({ firstName: '', lastName: '', id: Math.random() + '' })
 
 const App = () => {
@@ -27,8 +28,7 @@ const App = () => {
   const [user, setUser] = useState(newUser());
   const [mode, setMode] = useState(MODES.CREATE);
 
-
-
+  // Clear the user and set the mode back to create
   const reset = () => {
     setUser(newUser());
     setMode(MODES.CREATE);
@@ -55,6 +55,7 @@ const App = () => {
     reset()
   }
 
+  // Pick user from table to and set it for editing
   const editUser = (user) => {
     setUser(user)
     setMode(MODES.EDIT)
@@ -134,7 +135,7 @@ const App = () => {
                   >
                     USERS
                   </Typography>
-                  <UsersTable users={users} onClickUser={editUser} user={user} />
+                  <UsersTable users={users} onClickUser={editUser} activeUser={user} />
                 </Paper>
               </Grid>
             </Grid>

@@ -1,28 +1,32 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Button, TextField } from '@mui/material';
 import { MODES } from '../App'
 
-const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel: handleCancel }) => {
+const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel }) => {
 
   const isEditMode = mode === MODES.EDIT
 
   const handleDeleteUser = () => {
     onDelete(user)
-  }
+  };
+
+  const handleCancel = () => {
+    onCancel()
+  };
+
   const handleCreateUser = () => {
     onCreate(user)
-  }
+  };
+
   const handleEditUser = () => {
     onUpdate(user)
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditMode) return handleEditUser(user)
     return handleCreateUser(user)
-  }
-
-
+  };
 
   return (
     <>
@@ -35,7 +39,6 @@ const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel:
         noValidate
         autoComplete="off"
       >
-
         <div>
           <div>
             <TextField
@@ -70,9 +73,12 @@ const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel:
                 DELETE
               </Button>)
             }
-            < Button variant="contained" color="warning" sx={{ ml: 2 }} onClick={handleCancel} disabled={!(user.firstName || user.lastName)}>
-              CANCEL
-            </Button>
+            {
+              (user.firstName || user.lastName) &&
+              < Button variant="contained" color="warning" sx={{ ml: 2 }} onClick={handleCancel}>
+                CANCEL
+              </Button>
+            }
           </div>
         </div>
 

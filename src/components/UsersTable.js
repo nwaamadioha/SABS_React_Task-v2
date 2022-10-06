@@ -15,18 +15,22 @@ const columns = [
 ];
 
 
-const UserRow = ({ user, position, onClick }) => <TableRow hover role="checkbox" tabIndex={-1} onClick={onClick}>
+const UserRow = ({ user, position, onClick, isSelected }) => <TableRow hover selected={isSelected} role="checkbox" tabIndex={-1} onClick={onClick}>
   <TableCell>{position}</TableCell>
   <TableCell>{user.firstName}</TableCell>
   <TableCell>{user.lastName}</TableCell>
 </TableRow>
 
-export default function UsersTable({ users, user onClickUser: handleClickUserRow }) {
+export default function UsersTable({ users, activeUser, onClickUser }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleClickUserRow = (user) => {
+    onClickUser(user)
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -45,7 +49,7 @@ export default function UsersTable({ users, user onClickUser: handleClickUserRow
           </TableHead>
           <TableBody>
             {users
-              .map((user, index) => <UserRow user={user} position={index + 1} key={user.id} onClick={() => handleClickUserRow(user)} />)}
+              .map((user, index) => <UserRow isSelected={user.id === activeUser.id} user={user} position={index + 1} key={user.id} onClick={() => handleClickUserRow(user)} />)}
           </TableBody>
         </Table>
       </TableContainer>
