@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useEffect } from 'react'
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import MuiAppBar from '@mui/material/AppBar';
 import { Box, CssBaseline, Toolbar, Typography, Container, Grid, Paper } from '@mui/material';
@@ -7,6 +7,7 @@ import { Box, CssBaseline, Toolbar, Typography, Container, Grid, Paper } from '@
 import db from './db'
 import UserCRUD from './components/UserCRUD'
 import UsersTable from './components/UsersTable';
+import { useStoreActions } from 'easy-peasy';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1
@@ -20,46 +21,19 @@ export const MODES = {
   EDIT: 'EDIT_MODE'
 }
 // Generate a new user object
-export const newUser = () => ({ firstName: '', lastName: '', id: Math.random() + '' })
+//export const newUser = () => ({ firstName: '', lastName: '', id: Math.random() + '' })
 
 const App = () => {
-  // initialize users from db
-  const [users, setUsers] = useState(db.users);
-  const [user, setUser] = useState(newUser());
-  const [mode, setMode] = useState(MODES.CREATE);
 
-  // Clear the user and set the mode back to create
-  const reset = () => {
-    setUser(newUser());
-    setMode(MODES.CREATE);
-  }
+  const setUsers = useStoreActions((actions) => actions.setUsers)
+  const data = db.users
+  const setMode = useStoreActions((actions) => actions.setMode)
 
-  // Create new user
-  const addUser = (newUser) => {
-    const newUsers = [...users, newUser]
-    setUsers(newUsers)
-    reset()
-  }
-
-  // Edit a user
-  const updateUser = (modifiedUser) => {
-    const newUsers = users.map(user => user.id === modifiedUser.id ? modifiedUser : user)
-    setUsers(newUsers)
-    reset()
-  }
-
-  // Delete a user
-  const deleteUser = (removeUser) => {
-    const newUsers = users.filter(user => user.id !== removeUser.id)
-    setUsers(newUsers)
-    reset()
-  }
-
-  // Pick user from table to and set it for editing
-  const editUser = (user) => {
-    setUser(user)
-    setMode(MODES.EDIT)
-  }
+  
+  useEffect(() => {
+    setUsers(data)
+    setMode(MODES.CREATE)
+  }, [data, setUsers, setMode])
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -119,7 +93,7 @@ const App = () => {
                   >
                     USER MANAGEMENT
                   </Typography>
-                  <UserCRUD onCreate={addUser} onUpdate={updateUser} onDelete={deleteUser} user={user} setUser={setUser} mode={mode} onCancel={reset} />
+                  <UserCRUD />
                 </Paper>
               </Grid>
 
@@ -135,7 +109,7 @@ const App = () => {
                   >
                     USERS
                   </Typography>
-                  <UsersTable users={users} onClickUser={editUser} activeUser={user} />
+                  <UsersTable />
                 </Paper>
               </Grid>
             </Grid>

@@ -8,6 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
+import { useStoreActions, useStoreState } from 'easy-peasy'
+
 const columns = [
   { id: 'pos', label: 'No', style: { minWidth: 70 } },
   { id: 'firstname', label: 'First Name', style: { minWidth: 130 } },
@@ -21,16 +23,20 @@ const UserRow = ({ user, position, onClick, isSelected }) => <TableRow hover sel
   <TableCell>{user.lastName}</TableCell>
 </TableRow>
 
-export default function UsersTable({ users, activeUser, onClickUser }) {
+export default function UsersTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+  const users = useStoreState((state) => state.users)
+  const activeUser = useStoreState((state) => state.user)
+  const selectedUser = useStoreActions((actions) => actions.activeUser)
+  
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const handleClickUserRow = (user) => {
-    onClickUser(user)
+    selectedUser(user)
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -62,6 +68,6 @@ export default function UsersTable({ users, activeUser, onClickUser }) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Paper >
+    </Paper>
   );
 }

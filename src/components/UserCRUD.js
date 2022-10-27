@@ -1,33 +1,45 @@
 import React from 'react'
 import { Box, Button, TextField } from '@mui/material';
 import { MODES } from '../App'
+import { useStoreActions, useStoreState } from 'easy-peasy'
 
-const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel }) => {
+const UserCRUD = () => {
 
+  const user = useStoreState((state) => state.user)
+  const firstName = useStoreState((state) => state.firstName)
+  const lastName = useStoreState((state) => state.lastName)
+  const setFirstName = useStoreActions((actions) => actions.setFirstName)
+  const setLastName = useStoreActions((actions) => actions.setLastName)
+  const saveUser = useStoreActions((actions) => actions.saveUser)
+  const editUser = useStoreActions((actions) => actions.editUser)
+  const deleteUser = useStoreActions((actions) => actions.deleteUser)
+  const mode = useStoreState((state) => state.mode)
+  const reset = useStoreActions((actions) => actions.reset)
   const isEditMode = mode === MODES.EDIT
 
-  const handleDeleteUser = () => {
-    onDelete(user)
-  };
 
-  const handleCancel = () => {
-    onCancel()
-  };
 
   const handleCreateUser = () => {
-    onCreate(user)
-  };
-
+    const id = Math.random() 
+    const newUser = {id: id, firstName: firstName, lastName: lastName }
+    saveUser(newUser)
+  }
+  const handleDeleteUser = () => {
+    deleteUser(user)
+  }
+  const handleCancel = () => {
+    reset()
+  }
   const handleEditUser = () => {
-    onUpdate(user)
-  };
-
+    const editedUser = {id: user.id, firstName: firstName, lastName: lastName}
+    editUser(editedUser)
+    
+  }
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (isEditMode) return handleEditUser(user)
     return handleCreateUser(user)
-  };
-
+  }
   return (
     <>
       <Box
@@ -44,8 +56,8 @@ const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel 
             <TextField
               required
               id="firstName"
-              onChange={(e) => setUser({ ...user, firstName: e.target.value })}
-              value={user.firstName}
+              onChange={(e) => setFirstName(e.target.value )}
+              value={firstName}
               label="First Name"
               InputLabelProps={{
                 shrink: true,
@@ -54,8 +66,8 @@ const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel 
             <TextField
               required
               id="lastName"
-              onChange={(e) => setUser({ ...user, lastName: e.target.value })}
-              value={user.lastName}
+              onChange={(e) => setLastName( e.target.value )}
+              value={lastName}
               label="Last Name"
               InputLabelProps={{
                 shrink: true,
@@ -64,7 +76,7 @@ const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel 
           </div>
 
           <div >
-            <Button variant="contained" color="success" type='submit' disabled={!(user.firstName && user.lastName)}>
+            <Button variant="contained" color="success" type='submit' disabled={!(firstName && lastName)}>
               {isEditMode ? "EDIT" : "CREATE"}
             </Button>
             {
@@ -74,8 +86,8 @@ const UserCRUD = ({ onCreate, onUpdate, onDelete, user, setUser, mode, onCancel 
               </Button>)
             }
             {
-              (user.firstName || user.lastName) &&
-              < Button variant="contained" color="warning" sx={{ ml: 2 }} onClick={handleCancel}>
+              (firstName || lastName) &&
+              <Button variant="contained" color="warning" sx={{ ml: 2 }} onClick={handleCancel}>
                 CANCEL
               </Button>
             }
